@@ -4,7 +4,11 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            ScrapperPipeline scrapperPipeline = new ScrapperPipeline();
+            foreach (var item in scrapperPipeline.GetAllGenre())
+            {
+                Console.WriteLine($"Got the Genre of {item.Name} with Url {item.Link}");
+            } 
         }
     }
 }
