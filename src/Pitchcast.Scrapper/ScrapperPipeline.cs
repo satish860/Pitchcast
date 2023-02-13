@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 namespace Pitchcast.Scrapper
@@ -53,9 +55,26 @@ namespace Pitchcast.Scrapper
             return podcasts;
         }
 
-        
+        public async Task<IEnumerable<PodcastDetailsSlim>> GetPodCastDetails(string ids)
+        {
+            var HttpClient = new HttpClient();
+            var response = await HttpClient.GetAsync($"https://itunes.apple.com/lookup?id={ids}&country=US&media=podcast");
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            PodCastDetails details = PodCastDetails.FromJson(stringResponse);
+            return details.Results.Select(p =>
+             {
+                 return new PodcastDetailsSlim
+                 {
+                     Name = p.CollectionName,
+                     FeedUrl = p.FeedUrl,
+                     GenreList = p.Genres
+                 };
+             });
+        }
 
-        public string GetPodcastId(string url)
+
+
+        private string GetPodcastId(string url)
         {
             var idfragment = url.Split("/").Last().Replace("id", "");
             return idfragment;
@@ -72,8 +91,18 @@ namespace Pitchcast.Scrapper
         public string Url { get; set; }
     }
 
+    public class PodcastDetailsSlim
+    {
+        public string Name { get; set; }
 
-   
+        public Uri FeedUrl { get; set; }
+
+        public string Description { get; set; }
+
+        public List<string> GenreList { get; set; }
+    }
+
+
 
     public class Genre
     {
