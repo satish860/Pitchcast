@@ -6,12 +6,12 @@ namespace Pitchcast.Scrapper
     {
         static async Task Main(string[] args)
         {
-            ScrapperPipeline scrapperPipeline = new ScrapperPipeline();
+            
             List<PodcastDetailsSlim> podcasts = new List<PodcastDetailsSlim>();
-            foreach (var item in scrapperPipeline.GetAllGenre())
+            foreach (var item in ScrapperPipeline.GetAllGenre())
             {
                 Console.WriteLine($"Got the Genre of {item.Name} with Url {item.Link}");
-                var ids = scrapperPipeline
+                var ids = ScrapperPipeline
                     .GetPopularPodcast(item.Link)
                     .Select(p => p.Id);
 
@@ -19,13 +19,13 @@ namespace Pitchcast.Scrapper
                 {
                     var stringSeperatedIds = string.Join(",", pagedIds);
 
-                    var details = await scrapperPipeline.GetPodCastDetails(stringSeperatedIds);
+                    var details = await ScrapperPipeline.GetPodCastDetails(stringSeperatedIds).ConfigureAwait(false);
                     podcasts.AddRange(details);
                 }
             }
 
             var JsonList = JsonSerializer.Serialize(podcasts);
-            await File.WriteAllTextAsync("some.json", JsonList);
+            await File.WriteAllTextAsync("some.json", JsonList).ConfigureAwait(false);
         }
     }
 }

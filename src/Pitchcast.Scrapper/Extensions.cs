@@ -16,21 +16,19 @@ namespace Pitchcast.Scrapper
             Contract.Requires(pageSize > 0);
             Contract.Ensures(Contract.Result<IEnumerable<IEnumerable<T>>>() != null);
 
-            using (var enumerator = source.GetEnumerator())
+            using IEnumerator<T> enumerator = source.GetEnumerator();
+            while (enumerator.MoveNext())
             {
-                while (enumerator.MoveNext())
-                {
-                    var currentPage = new List<T>(pageSize)
+                var currentPage = new List<T>(pageSize)
             {
                 enumerator.Current
             };
 
-                    while (currentPage.Count < pageSize && enumerator.MoveNext())
-                    {
-                        currentPage.Add(enumerator.Current);
-                    }
-                    yield return new ReadOnlyCollection<T>(currentPage);
+                while (currentPage.Count < pageSize && enumerator.MoveNext())
+                {
+                    currentPage.Add(enumerator.Current);
                 }
+                yield return new ReadOnlyCollection<T>(currentPage);
             }
         }
     }

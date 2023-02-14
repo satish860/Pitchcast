@@ -13,7 +13,7 @@ namespace Pitchcast.Scrapper
 {
     public class ScrapperPipeline
     {
-        public List<Genre> GetAllGenre()
+        public static IEnumerable<Genre> GetAllGenre()
         {
             const string seedUrl = "https://podcasts.apple.com/us/genre/podcasts/id26?mt=2";
             var web = new HtmlWeb();
@@ -24,17 +24,17 @@ namespace Pitchcast.Scrapper
                 return new Genre
                 {
                     Name = p.InnerHtml,
-                    Link = p.Attributes["href"].Value
+                    Link = p.Attributes["href"].Value,
                 };
             }).ToList();
             return genreList;
         }
 
-        public List<Podcast> GetPopularPodcast(string url)
+        public static IEnumerable<Podcast> GetPopularPodcast(string url)
         {
             var web = new HtmlWeb();
             var indivdualGenre = web.Load(url);
-            List<Podcast> podcasts = new List<Podcast>();
+            List<Podcast> podcasts = new ();
             foreach (var node in indivdualGenre.QuerySelectorAll("div > div"))
             {
                 if (node.Id.Equals("selectedcontent", StringComparison.InvariantCultureIgnoreCase))
@@ -46,7 +46,7 @@ namespace Pitchcast.Scrapper
                         {
                             Name = p.InnerHtml,
                             Url = p.Attributes["href"].Value,
-                            Id = GetPodcastId(p.Attributes["href"].Value)
+                            Id = GetPodcastId(p.Attributes["href"].Value),
 
                         };
                     }).ToList();
@@ -55,11 +55,11 @@ namespace Pitchcast.Scrapper
             return podcasts;
         }
 
-        public async Task<IEnumerable<PodcastDetailsSlim>> GetPodCastDetails(string ids)
+        public static async Task<IEnumerable<PodcastDetailsSlim>> GetPodCastDetails(string ids)
         {
             var HttpClient = new HttpClient();
-            var response = await HttpClient.GetAsync($"https://itunes.apple.com/lookup?id={ids}&country=US&media=podcast");
-            var stringResponse = await response.Content.ReadAsStringAsync();
+            var response = await HttpClient.GetAsync($"https://itunes.apple.com/lookup?id={ids}&country=US&media=podcast").ConfigureAwait(false);
+            var stringResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             PodCastDetails details = PodCastDetails.FromJson(stringResponse);
             return details.Results.Select(p =>
              {
@@ -67,49 +67,19 @@ namespace Pitchcast.Scrapper
                  {
                      Name = p.CollectionName,
                      FeedUrl = p.FeedUrl,
-                     GenreList = p.Genres
+                     GenreList = p.Genres,
                  };
              });
         }
 
 
 
-        private string GetPodcastId(string url)
+        private static string GetPodcastId(string url)
         {
-            var idfragment = url.Split("/").Last().Replace("id", "");
+            var idfragment = url.Split("/")
+                .Last()
+                .Replace("id", "", StringComparison.Ordinal);
             return idfragment;
         }
-    }
-
-
-    public class Podcast
-    {
-        public string Name { get; set; }
-
-        public string Id { get; set; }
-
-        public string Url { get; set; }
-    }
-
-    public class PodcastDetailsSlim
-    {
-        public string Name { get; set; }
-
-        public Uri FeedUrl { get; set; }
-
-        public string Description { get; set; }
-
-        public List<string> GenreList { get; set; }
-    }
-
-
-
-    public class Genre
-    {
-        public string Name { get; set; }
-
-        public string Link { get; set; }
-
-        public long Id { get; set; }
     }
 }
