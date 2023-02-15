@@ -14,14 +14,14 @@ namespace Pitchcast.DataWorker
 
         public string Description { get; set; }
 
-        public int EpisodeLength { get; set; }
+        public long EpisodeLength { get; set; }
 
         public int SizeToDownload { get; set; }
 
-        public string DownloadLink { get; set; }
+        public Uri DownloadLink { get; set; }
 
         public string DownloadMimeType { get; set; }
 
-        public string EpisodeImage { get; set; }
+        public Uri EpisodeImage { get; set; }
     }
 }
