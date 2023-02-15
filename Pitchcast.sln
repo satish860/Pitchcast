@@ -7,7 +7,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BE6F800E-357
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2700F5D8-EDCF-40C3-B681-DC1F24638988}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pitchcast.Scrapper", "src\Pitchcast.Scrapper\Pitchcast.Scrapper.csproj", "{43262DD6-359D-4A34-90B5-D327E74B3AA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pitchcast.Scrapper", "src\Pitchcast.Scrapper\Pitchcast.Scrapper.csproj", "{43262DD6-359D-4A34-90B5-D327E74B3AA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pitchcast.DataWorker", "src\Pitchcast.DataWorker\Pitchcast.DataWorker.csproj", "{B880E2D1-4D5D-4561-AA86-6D336418E72A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,12 +21,17 @@ Global
 		{43262DD6-359D-4A34-90B5-D327E74B3AA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43262DD6-359D-4A34-90B5-D327E74B3AA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43262DD6-359D-4A34-90B5-D327E74B3AA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B880E2D1-4D5D-4561-AA86-6D336418E72A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B880E2D1-4D5D-4561-AA86-6D336418E72A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B880E2D1-4D5D-4561-AA86-6D336418E72A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B880E2D1-4D5D-4561-AA86-6D336418E72A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{43262DD6-359D-4A34-90B5-D327E74B3AA4} = {BE6F800E-357E-4771-866B-3A842D41D33E}
+		{B880E2D1-4D5D-4561-AA86-6D336418E72A} = {BE6F800E-357E-4771-866B-3A842D41D33E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6E1079B2-FC6B-4BCB-86FB-468F61291545}

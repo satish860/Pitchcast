@@ -65,6 +65,7 @@ namespace Pitchcast.Scrapper
                      Name = p.CollectionName,
                      FeedUrl = p.FeedUrl,
                      GenreList = p.Genres,
+                    
                  };
              });
         }

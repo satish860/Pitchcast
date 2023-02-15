@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
+    <UserSecretsId>dfadd5b1-398c-49fe-931e-dba9e81f8842</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,8 +18,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="PodcastIndexSharp" Version="1.0.1" />
     <PackageReference Include="System.Threading.Tasks.Dataflow" Version="7.0.0" />
   </ItemGroup>
 
