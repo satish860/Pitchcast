@@ -23,7 +23,7 @@ namespace Pitchcast.Scrapper
                      s.AddPodcastIndexSharp(config);
                      s.AddNats();
                  }).Build();
-            using var serviceScope = host.Services.CreateScope();
+            using var serviceScope = host.Services.CreateAsyncScope();
             var provider = serviceScope.ServiceProvider;
 
             var podcastIndex = provider.GetService(typeof(IPodcastIndex)) as IPodcastIndex;
@@ -39,10 +39,8 @@ namespace Pitchcast.Scrapper
 
 
                 await Publisher.PublishAsync("hello", ids).ConfigureAwait(false);
-                PodcastIndexSharp.Model.Podcast podcast = await podcastIndex.Podcasts().ByiTunesId(uint.Parse(ids)).ConfigureAwait(false);
-                Console.WriteLine($"Podcast by iTunes ID: Podcast \"{podcast.Title}\" was last updated {podcast.LastUpdateTime}");
-
-                var episode = await podcastIndex.Episodes().ByiTunesId(uint.Parse(ids),1000).ConfigureAwait(false);
+                
+               
                 Console.ReadKey();
 
 
