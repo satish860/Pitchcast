@@ -1,3 +1,5 @@
+using AlterNats;
+
 namespace Pitchcast.DataWorker
 {
     public class Program
@@ -8,7 +10,9 @@ namespace Pitchcast.DataWorker
                 .ConfigureServices(services =>
                 {
                     services.AddHostedService<Worker>();
+                    services.AddNats();
                 })
+                
                 .Build();
 
             host.Run();

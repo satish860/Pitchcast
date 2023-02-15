@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AlterNats;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PodcastIndexSharp;
@@ -20,11 +21,13 @@ namespace Pitchcast.Scrapper
                  .ConfigureServices(s =>
                  {
                      s.AddPodcastIndexSharp(config);
+                     s.AddNats();
                  }).Build();
             using var serviceScope = host.Services.CreateScope();
             var provider = serviceScope.ServiceProvider;
 
             var podcastIndex = provider.GetService(typeof(IPodcastIndex)) as IPodcastIndex;
+            var Publisher = provider.GetService<INatsCommand>();
 
             List<PodcastDetailsSlim> podcasts = new List<PodcastDetailsSlim>();
             foreach (var item in ScrapperPipeline.GetAllGenre())
@@ -33,6 +36,9 @@ namespace Pitchcast.Scrapper
                 var ids = ScrapperPipeline
                     .GetPopularPodcast(item.Link)
                     .Select(p => p.Id).First();
+
+
+                await Publisher.PublishAsync("hello", ids).ConfigureAwait(false);
                 PodcastIndexSharp.Model.Podcast podcast = await podcastIndex.Podcasts().ByiTunesId(uint.Parse(ids)).ConfigureAwait(false);
                 Console.WriteLine($"Podcast by iTunes ID: Podcast \"{podcast.Title}\" was last updated {podcast.LastUpdateTime}");
 
