@@ -1,13 +1,13 @@
 ﻿namespace Pitchcast.Scrapper
 {
-    public class PodcastDetailsSlim
+    public record PodcastDetailsSlim
     {
-        public string Name { get; set; }
+        public string Name { get; init; }
 
-        public Uri FeedUrl { get; set; }
+        public Uri FeedUrl { get; init; }
 
-        public string Description { get; set; }
+        public string Description { get; init; }
 
-        public List<string> GenreList { get; set; }
+        public List<string> GenreList { get; init; }
     }
 }

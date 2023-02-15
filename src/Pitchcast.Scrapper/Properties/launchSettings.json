@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Pitchcast.Scrapper": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

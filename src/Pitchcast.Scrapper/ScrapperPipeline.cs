@@ -1,4 +1,6 @@
-﻿using HtmlAgilityPack;
+﻿using CodeHollow.FeedReader;
+using CodeHollow.FeedReader.Feeds.Itunes;
+using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
 using System;
 using System.Collections.Generic;
@@ -13,7 +15,7 @@ namespace Pitchcast.Scrapper
 {
     public class ScrapperPipeline
     {
-        public static IEnumerable<Genre> GetAllGenre()
+        public static IEnumerable<Genre?> GetAllGenre()
         {
             const string seedUrl = "https://podcasts.apple.com/us/genre/podcasts/id26?mt=2";
             var web = new HtmlWeb();
@@ -21,12 +23,8 @@ namespace Pitchcast.Scrapper
             var listofLinks = doc.QuerySelectorAll(".top-level-genre");
             var genreList = listofLinks.Select(p =>
             {
-                return new Genre
-                {
-                    Name = p.InnerHtml,
-                    Link = p.Attributes["href"].Value,
-                };
-            }).ToList();
+                return new Genre(Name: p.InnerHtml, Link: p.Attributes["href"].Value, Id: GetPodcastId(p.Attributes["href"].Value));
+            });
             return genreList;
         }
 
@@ -34,7 +32,7 @@ namespace Pitchcast.Scrapper
         {
             var web = new HtmlWeb();
             var indivdualGenre = web.Load(url);
-            List<Podcast> podcasts = new ();
+            IEnumerable<Podcast> podcasts = new List<Podcast>();
             foreach (var node in indivdualGenre.QuerySelectorAll("div > div"))
             {
                 if (node.Id.Equals("selectedcontent", StringComparison.InvariantCultureIgnoreCase))
@@ -42,14 +40,13 @@ namespace Pitchcast.Scrapper
                     var links = node.QuerySelectorAll("a");
                     podcasts = links.Select(p =>
                     {
-                        return new Podcast
-                        {
-                            Name = p.InnerHtml,
-                            Url = p.Attributes["href"].Value,
-                            Id = GetPodcastId(p.Attributes["href"].Value),
+                        return new Podcast(
+                            Name: p.InnerHtml,
+                            Url: p.Attributes["href"].Value,
+                            Id: GetPodcastId(p.Attributes["href"].Value));
 
-                        };
-                    }).ToList();
+
+                    });
                 }
             }
             return podcasts;
@@ -70,6 +67,39 @@ namespace Pitchcast.Scrapper
                      GenreList = p.Genres,
                  };
              });
+        }
+
+        public static async Task<IEnumerable<PodcastEpisode>> GetPodcastEpisodesAsync(string feedUrl)
+        {
+            try
+            {
+                var HttpClient = new HttpClient();
+                var response = await HttpClient.GetAsync(feedUrl).ConfigureAwait(false);
+                var stringResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var feedReader = FeedReader.ReadFromString(stringResponse);
+                var channel = feedReader.GetItunesChannel();
+                List<PodcastEpisode> podcastEpisodes = new List<PodcastEpisode>();
+                return feedReader
+                     .Items
+                     .Select(p =>
+                     {
+                         var ituneItems = p.GetItunesItemWithTitle();
+                         return new PodcastEpisode
+                         (
+                             Name:ituneItems.Title,
+                             Description: ituneItems.Summary,
+                             MediaUrl : ituneItems.MediaUrl,
+                             ImageUrl: ituneItems.Image?.Href
+                         );
+                     });
+            }
+            catch (Exception ex)
+            {
+                
+                return Enumerable.Empty<PodcastEpisode>();
+            }
+
+            
         }
 
 

@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Generic;
+using System.Text.Json;
+using System.Threading.Tasks.Dataflow;
 
 namespace Pitchcast.Scrapper
 {
@@ -6,7 +8,7 @@ namespace Pitchcast.Scrapper
     {
         static async Task Main(string[] args)
         {
-            
+
             List<PodcastDetailsSlim> podcasts = new List<PodcastDetailsSlim>();
             foreach (var item in ScrapperPipeline.GetAllGenre())
             {
@@ -24,8 +26,27 @@ namespace Pitchcast.Scrapper
                 }
             }
 
-            var JsonList = JsonSerializer.Serialize(podcasts);
-            await File.WriteAllTextAsync("some.json", JsonList).ConfigureAwait(false);
+            List<PodcastEpisode> podcastedpisode = new List<PodcastEpisode>();
+            Console.WriteLine($"Total Podcast in popular category {podcasts.Count}");
+            var count = 0;
+            foreach (var podcast in podcasts)
+            {
+                Console.WriteLine($"I am in {count} out of {podcasts.Count}");
+                if (podcast.FeedUrl != null)
+                {
+                    var episode = await ScrapperPipeline
+                                        .GetPodcastEpisodesAsync(podcast.FeedUrl.OriginalString)
+                                        .ConfigureAwait(false);
+                    podcastedpisode.AddRange(episode);
+                }
+
+                count++;
+            }
+            var JsonList = JsonSerializer.Serialize(podcastedpisode);
+            await File.WriteAllTextAsync("someepisode.json", JsonList).ConfigureAwait(false);
         }
+
+
+
     }
 }
