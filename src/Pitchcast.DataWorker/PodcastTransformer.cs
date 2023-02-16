@@ -1,4 +1,5 @@
-﻿using PodcastIndexSharp;
+﻿using MongoDB.Driver;
+using PodcastIndexSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,12 @@ namespace Pitchcast.DataWorker
     public class PodcastTransformer 
     {
         private readonly IPodcastIndex podcastIndex;
+        private readonly IMongoCollection<Podcast> podcastCollection;
 
-        public PodcastTransformer(IPodcastIndex podcastIndex)
+        public PodcastTransformer(IPodcastIndex podcastIndex, IMongoCollection<Podcast> podcastCollection)
         {
             this.podcastIndex = podcastIndex;
+            this.podcastCollection = podcastCollection;
         }
 
         public async Task GetPodcastDetails(string id)
@@ -43,6 +46,7 @@ namespace Pitchcast.DataWorker
                 Episodes = podcastEpisodes
             };
 
+            await podcastCollection.InsertOneAsync(podcast);
             // Call database and store the value.
             
         }

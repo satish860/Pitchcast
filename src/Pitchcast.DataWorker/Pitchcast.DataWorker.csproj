@@ -14,6 +14,7 @@
     <PackageReference Include="AlterNats.Hosting" Version="1.0.6" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.19.0" />
     <PackageReference Include="PodcastIndexSharp" Version="1.0.1" />
   </ItemGroup>
 </Project>

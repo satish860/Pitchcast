@@ -1,4 +1,5 @@
 using AlterNats;
+using MongoDB.Driver;
 using PodcastIndexSharp;
 using System.Reflection;
 
@@ -8,6 +9,7 @@ namespace Pitchcast.DataWorker
     {
         public static void Main(string[] args)
         {
+
             var config = new ConfigurationBuilder()
                 .AddUserSecrets(Assembly.GetExecutingAssembly())
                 .Build();
@@ -16,6 +18,19 @@ namespace Pitchcast.DataWorker
                 {
                     services.AddHostedService<Worker>();
                     services.AddPodcastIndexSharp(config);
+                    services.AddSingleton<IMongoClient, MongoClient>(s =>
+                    {
+                        var uri = s.GetRequiredService<IConfiguration>()["DBHOST"];
+                        return new MongoClient(uri);
+                    });
+                    services.AddSingleton<IMongoCollection<Podcast>>(s =>
+                    {
+                        var mongoClient = s.GetRequiredService<IMongoClient>();
+                        var DBName = s.GetRequiredService<IConfiguration>()["DBNAME"];
+                        var database = mongoClient.GetDatabase(DBName);
+                        var collection = database.GetCollection<Podcast>("podcast");
+                        return collection;
+                    });
                     services.AddSingleton<PodcastTransformer>();
                     services.AddNats();
                 })
