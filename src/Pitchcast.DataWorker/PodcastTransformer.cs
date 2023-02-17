@@ -34,11 +34,13 @@ namespace Pitchcast.DataWorker
                     DownloadMimeType = p.EnclosureType,
                     EpisodeImage = p.FeedImage,
                     EpisodeLength = p.EnclosureLength,
+                    Title = p.Title
                 };
             }).ToList();
 
             Podcast podcast = new Podcast
             {
+                Name = downloadedPodcasts.Title,
                 Description = downloadedPodcasts.Description,
                 EpisodeCount = downloadedPodcasts.EpisodeCount,
                 Id = downloadedPodcasts.Id,
